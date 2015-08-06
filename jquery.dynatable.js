@@ -379,7 +379,9 @@
 
       // Appended dynatable interactive elements
       if (settings.features.recordCount) {
-        $('#dynatable-record-count-' + obj.element.id).replaceWith(obj.recordsCount.create());
+        if (settings.dataset.records !== null) {
+          $('#dynatable-record-count-' + obj.element.id).replaceWith(obj.recordsCount.create());
+        }
       }
       if (settings.features.paginate) {
         $('#dynatable-pagination-links-' + obj.element.id).replaceWith(obj.paginationLinks.create());
@@ -734,8 +736,14 @@
             text: settings.inputs.recordCountText
           };
 
-      if (settings.features.paginate) {
+      // If the records are not available yet, populate empty element
+      if (settings.dataset.queryRecordCount === null) {
+        return utility.template(settings.inputs.recordCountTemplate, $.extend(options, {
+          textTemplate: ''
+        }));
+      }
 
+      if (settings.features.paginate) {
         // If currently displayed records are a subset (page) of the entire collection
         if (options.recordsShown < options.recordsQueryCount) {
           var bounds = obj.records.pageBounds();
